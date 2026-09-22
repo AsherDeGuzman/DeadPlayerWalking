@@ -1,0 +1,23 @@
+[gd_scene format=3 uid="uid://c4436mxrd704x"]
+
+[ext_resource type="Script" uid="uid://pgu4ou7v118p" path="res://player.gd" id="1_ig7tw"]
+
+[node name="Main" type="Node2D" unique_id=160684055]
+
+[node name="Player" type="CharacterBody2D" parent="." unique_id=1555977790]
+position = Vector2(576, 324)
+script = ExtResource("1_ig7tw")
+
+[node name="ColorRect" type="ColorRect" parent="Player" unique_id=1793358545]
+offset_left = -25.0
+offset_top = -25.0
+offset_right = 25.0
+offset_bottom = 25.0
+color = Color(0, 0, 1, 1)
+
+[node name="Enemy" type="ColorRect" parent="." unique_id=2073043295]
+offset_left = 800.0
+offset_top = 300.0
+offset_right = 860.0
+offset_bottom = 360.0
+color = Color(1, 0, 0, 1)
