@@ -1,0 +1,124 @@
+5.1 Level Layout Pattern
+  Chosen pattern: Linear.
+  A linear layout suits the first level because Dead Player Walking must teach movement, attack, dodge/repositioning, and the previous-self mechanic in a controlled order. It allows one new demand to be introduced at a time, includes a short recovery space, and then combines familiar mechanics in a final encounter. An open or hub-and-spoke layout would offer more route freedom but reduce control over the teaching order and difficulty curve.
+  5.2 Annotated Level Map
+  The sequence below is the proposed first-level map. It identifies the player start, objective, major obstacles, and rising/resting pacing beats.
+  Zone / map flow
+  Annotation and gameplay purpose
+  1. START — P
+  Safe start area with no active enemies; player tests movement.
+  ↓ 2. MOVEMENT SPACE
+  Walls or a narrow passage are obstacles. Their placement encourages repositioning.
+  ↓ 3. BASIC COMBAT — E
+  One or two weak enemies. RISING BEAT: player must attack to clear the route.
+  ↓ 4. DODGE ARENA — E + !
+  Enemy attack pattern or visible hazard. RISING BEAT: player must dodge or reposition.
+  ↓ 5. RECOVERY ROOM — R
+  No active enemies. RESTING BEAT: short pause before the new threat.
+  ↓ 6. PREVIOUS-SELF ARENA — S
+  One recorded previous self. RISING BEAT: introduce the signature mechanic in a readable space.
+  ↓ 7. FINAL ARENA — E + S
+  Ordinary enemy/enemies plus one previous self. PEAK BEAT: combine learned mechanics.
+  ↓ 8. EXIT / OBJECTIVE — *
+  Reach the exit to complete the level; pressure releases after the peak encounter.
+
+
+Legend: P = player start; E = ordinary enemy; ! = hazard/dodge cue; R = recovery/rest; S = previous self; * = objective.
+This is a design proposal, not a claim that all zones already exist in the Godot prototype. Implement and test zones incrementally.
+
+5.3 Pacing and Difficulty Curve
+  Provisional difficulty scale: 1 = very easy; 5 = most demanding. Values are targets for playtesting, not measured results.
+  Zone
+  Main demand
+  Difficulty
+  Pacing
+  1. Start
+  Learn controls
+  1.0
+  Safe introduction
+  2. Movement
+  Navigate walls
+  1.5
+  Gentle rise
+  3. Basic combat
+  Attack weak enemies
+  2.5
+  Rising beat
+  4. Dodge arena
+  Avoid attack/hazard
+  3.0
+  Rising beat
+  5. Recovery
+  No active combat
+  1.0
+  Resting beat
+  6. Previous self
+  Adapt to recorded opponent
+  4.0
+  Strong rise
+  7. Final arena
+  Ordinary enemies plus one previous self
+  5.0
+  Peak
+  8. Exit
+  Reach objective
+  1.0
+  Release/completion
+  
+  
+  Flow-channel fit point
+  Zone 6 is the intended flow-channel fit point. The player has practiced movement, attack, and dodging, so one previous self adds a new challenge while relying on skills already learned. Keep the arena readable and begin with only one previous self.
+  Pacing risks and mitigation
+  Boredom risk: Zone 5 may feel unnecessary if it is too long or empty. Mitigation: keep the recovery space brief and make it a purposeful pause before the new threat.
+  Anxiety/frustration risk: Zone 7 may overwhelm the player if too many enemies attack at once or the previous self is hard to distinguish. Mitigation: cap simultaneous threats, use clear visual differences, and leave space to read attacks.
+  Difficulty sequence: 1.0 → 1.5 → 2.5 → 3.0 → 1.0 → 4.0 → 5.0 → 1.0.
+5.4 Teaching Mechanics Through Level Sequencing
+  Mechanic
+  Location
+  Technique
+  What the level teaches
+  Movement/positioning
+  Zones 1–2
+  Isolated safe space + environmental cue
+  Safe movement first; walls make repositioning useful.
+  Basic attack
+  Zone 3
+  Forced encounter with one or two weak enemies
+  Attack is needed to clear the route, with low initial pressure.
+  Dodge/reposition
+  Zone 4
+  Forced encounter + visible cue
+  A readable attack or hazard makes standing still ineffective.
+  Previous-self enemy
+  Zone 6
+  One forced encounter in a clear arena
+  A familiar character appears as an opponent, showing the core hook through play.
+  Combining mechanics
+  Zone 7
+  Controlled combined encounter
+  Movement, attack, and dodge are used together against limited threats.
+  
+  
+  The level teaches through geometry, encounter design, and visible cause-and-effect rather than tutorial popups. If testing shows a cue is unclear, revise the cue or encounter.
+5.5 Peer Gallery Walk and Revision Note
+  Complete after the actual gallery walk. Do not invent peer feedback.
+  Item
+  Record after the activity
+  Feedback received
+  [Write the specific comment actually received.]
+  Revision made
+  [State the actual change made to the map, curve, or mechanic sequence.]
+  Reason
+  [Explain how the change improved map/curve alignment.]
+  
+  
+  References
+  Csikszentmihalyi, M. (1990). Flow: The psychology of optimal experience. Harper & Row.
+  University of Baguio, School of Information Technology. (n.d.). GAMDES1 GDD Template (internal course document).
+  University of Baguio, School of Information Technology. (n.d.). Level Design: Drafting GDD Section V. GAMDES1 laboratory instructional material.
+  Section V self-check
+  Layout pattern justified against the Section IV core loop.
+  Map marks start, objective, obstacles, rising beats, and a resting beat.
+  Curve names a flow point, boredom/anxiety risk, and mitigation.
+  At least two mechanics have specific locations and non-popup teaching techniques.
+  Complete peer revision fields after the actual gallery walk.
