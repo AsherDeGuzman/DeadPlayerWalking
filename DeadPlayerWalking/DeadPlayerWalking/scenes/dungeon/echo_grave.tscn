@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Texture2D" path="res://ASSETS/DUNGEON ENVIRONMENT ASSETS/Asset 33 - Dungeon Pillars and Props.png" id="1_props"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_grave"]
+atlas = ExtResource("1_props")
+region = Rect2(48, 16, 192, 400)
+
+[node name="EchoGrave" type="Node2D"]
+visible = false
+
+[node name="GraveMarker" type="Sprite2D" parent="."]
+position = Vector2(0, -184)
+z_index = 2
+texture_filter = 1
+scale = Vector2(0.24, 0.24)
+texture = SubResource("AtlasTexture_grave")

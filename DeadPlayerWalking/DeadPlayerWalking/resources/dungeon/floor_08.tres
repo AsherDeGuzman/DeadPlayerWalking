@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="FloorDefinition" format=3 uid="uid://t8fdj74rg3eo"]
+
+[ext_resource type="Script" uid="uid://1g0wwqgoxbd7" path="res://scripts/dungeon/floor_definition.gd" id="1_floor"]
+
+[resource]
+script = ExtResource("1_floor")
+floor_number = 8
+floor_name = "Corrupted Depths"
+room_count = 5
+base_enemy_count = 3
+healing_room_index = 2
+theme_color = Color(0.188235, 0.137255, 0.184314, 1)

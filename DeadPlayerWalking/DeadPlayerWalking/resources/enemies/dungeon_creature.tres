@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="EnemyArchetype" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/enemy_archetype.gd" id="1_archetype"]
+
+[resource]
+script = ExtResource("1_archetype")
+archetype_id = &"dungeon_creature"
+display_name = "STALKER"
+animation_profile = &"creature"
+maximum_health = 56
+attack_damage = 8
+movement_speed = 108.0
+detection_range = 620.0
+attack_range = 64.0
+preferred_attack_distance = 48.0
+attack_cooldown = 0.85

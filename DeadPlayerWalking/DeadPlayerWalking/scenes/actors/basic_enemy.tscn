@@ -1,0 +1,32 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/enemy.gd" id="1_enemy"]
+[ext_resource type="Texture2D" path="res://ASSETS/ORDINARY ENEMY ASSETS/Asset 17 — Skeleton warrior.png" id="2_art"]
+[ext_resource type="Resource" path="res://resources/enemies/skeleton_warrior.tres" id="3_archetype"]
+[ext_resource type="Script" path="res://scripts/ui/mob_health_bar.gd" id="4_health_bar"]
+
+[sub_resource type="CircleShape2D" id="CircleShape_enemy"]
+radius = 16.0
+
+[node name="BasicEnemy" type="CharacterBody2D"]
+collision_layer = 2
+collision_mask = 6
+script = ExtResource("1_enemy")
+archetype = ExtResource("3_archetype")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape_enemy")
+
+[node name="Art" type="Sprite2D" parent="."]
+texture = ExtResource("2_art")
+texture_filter = 1
+scale = Vector2(0.045, 0.045)
+z_index = -1
+
+[node name="Animation" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+z_index = 1
+
+[node name="MobHealthBar" type="Node2D" parent="."]
+position = Vector2(0, -66)
+script = ExtResource("4_health_bar")

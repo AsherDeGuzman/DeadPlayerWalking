@@ -1,0 +1,1112 @@
+MASTER DEVELOPMENT PROMPT — DEAD PLAYER WALKING
+Godot Engine 4.7.2 | GitHub Copilot Agent Mode
+
+You are the lead game developer, gameplay programmer, systems architect, and technical designer responsible for building a complete playable game called Dead Player Walking.
+
+Your task is to design, implement, organize, and test the game directly inside the currently open project repository using Godot Engine 4.7.2 and GDScript.
+
+You must work as an autonomous development agent. Inspect the existing project, create the required files and scenes, implement systems, connect them correctly, and verify that the game runs.
+
+Do not merely provide instructions or code snippets. Make actual changes to the project files.
+
+1. PROJECT OVERVIEW
+
+Game title: Dead Player Walking
+
+Engine: Godot Engine 4.7.2
+
+Programming language: GDScript
+
+Game type: 2D top-down action roguelike
+
+Primary platform: Mobile
+
+Additional development platform: Desktop for testing and debugging
+
+Visual direction: Dark fantasy pixel art
+
+Core gameplay concept:
+
+The player descends through a dangerous dungeon consisting of 10 floors. Each floor contains interconnected combat rooms populated by enemies.
+
+The player fights through these rooms using two unique weapons:
+- Dungeon Edge — melee weapon.
+- Warden Crossbow — ranged weapon.
+Enemies must be defeated before locked room exits become accessible.
+
+The central mechanic revolves around previous versions of the player. When the player is defeated, their character progression and combat capabilities contribute to the creation of a previous-self enemy that can appear in future encounters.
+
+The player can spend earned currency after defeat to purchase permanent character and weapon upgrades.
+
+The objective is to descend through all 10 floors and defeat the final boss on Floor 10.
+
+2. SOURCE OF TRUTH — GAME DESIGN DOCUMENT
+
+Before implementing anything, inspect the project's files and locate the available Game Design Document.
+
+Relevant project documents may include:
+- Dead_Player_Walking_Complete_GDD_Sections_I-VIII.docx
+- Tokens_Dead_Player_Walking_GDD_Section_V.docx
+- Tokens_Dead_Player_Walking_GDD_Section_VI.docx
+If these documents are available, read them and use the consolidated GDD as the primary source of truth.
+
+The consolidated GDD takes precedence over older draft sections.
+
+Create an internal implementation reference at:
+
+docs/IMPLEMENTATION_PLAN.md
+
+This document must record:
+- Confirmed gameplay mechanics.
+- Player abilities and controls.
+- Weapon mechanics.
+- Enemy requirements.
+- Boss requirements.
+- Floor progression.
+- Death and upgrade progression.
+- UI requirements.
+- Asset requirements.
+- Any unresolved design decisions.
+IMPORTANT:
+
+Do not invent gameplay mechanics simply because they are common in roguelike games.
+
+If a mechanic is not defined in the GDD, do not silently introduce it. Use a simple implementation only when necessary to make the game functional, and document the assumption.
+
+Do not add dedicated safe rooms, rest rooms, or recovery rooms. The game does not use those room types.
+
+Healing pickups may appear as limited one-time-use pickups. They must not completely restore the player's health.
+
+Previous-self enemies are based on defeated character statistics and weapon archetypes. Do not implement recording or reproduction of player movement, input history, attack timing, routes, or playstyle.
+
+3. DEVELOPMENT RULES
+
+Follow these rules throughout development.
+
+Godot compatibility:
+- Use Godot Engine 4.7.2.
+- Use GDScript compatible with Godot 4.7.2.
+- Do not use deprecated Godot APIs.
+- Prefer typed GDScript.
+- Use appropriate Godot 4 node types and signals.
+- Avoid unnecessary third-party plugins.
+- Do not mix Godot 3 syntax with Godot 4 syntax.
+- Use CharacterBody2D for character movement.
+- Use Area2D for attack hitboxes, pickups, and detection zones where appropriate.
+- Use CanvasLayer for HUD elements.
+- Use TileMapLayer for dungeon tile layers.
+Code quality:
+- Use modular, reusable, maintainable scripts.
+- Avoid giant scripts that control the entire game.
+- Separate gameplay systems from UI systems.
+- Use signals for communication between independent systems.
+- Avoid excessive use of global variables.
+- Use a centralized game state manager where appropriate.
+- Use Resources for configurable character, weapon, enemy, and upgrade data.
+- Add comments to explain complex gameplay logic.
+- Use clear naming conventions.
+- Handle missing references and invalid states safely.
+- Avoid creating duplicate systems.
+Agent behavior:
+- Inspect the existing project before modifying it.
+- Preserve functional existing files unless changes are necessary.
+- Do not overwrite user-created assets unnecessarily.
+- Do not generate fake references to assets that do not exist.
+- Do not leave important mechanics as TODO comments.
+- Do not claim a feature works unless it has been implemented and tested.
+- Run Godot validation and tests whenever possible.
+- Fix errors before moving to the next milestone.
+- Keep project documentation updated as development progresses.
+
+4. PROJECT STRUCTURE
+
+Establish a clean and scalable project structure.
+
+Use the following as the target organization:
+
+This is a target, not a reason to restructure a functioning existing project. This repository stores supplied art under the case-sensitive `Assets/` directory. Preserve that directory, its subfolder names, and source filenames; do not create a duplicate lowercase `assets/` tree or move/rename supplied artwork. Reference the exact imported paths, such as `res://Assets/...`.
+
+Dead_Player_Walking/
+
+project.godot
+
+assets/
+	characters/
+		player/
+		previous_self/
+		enemies/
+		bosses/
+	weapons/
+		dungeon_edge/
+		warden_crossbow/
+	environment/
+		upper_dungeon/
+		deep_dungeon/
+		props/
+		doors/
+	effects/
+	ui/
+		icons/
+		buttons/
+		backgrounds/
+	audio/
+		music/
+		sfx/
+
+scenes/
+	main/
+	player/
+	enemies/
+	bosses/
+	weapons/
+	projectiles/
+	rooms/
+	floors/
+	pickups/
+	ui/
+	cutscenes/
+
+scripts/
+	autoload/
+	player/
+	enemies/
+	bosses/
+	combat/
+	weapons/
+	rooms/
+	progression/
+	data/
+	ui/
+	utilities/
+
+resources/
+	player/
+	weapons/
+	enemies/
+	bosses/
+	upgrades/
+
+docs/
+	IMPLEMENTATION_PLAN.md
+	PROJECT_STRUCTURE.md
+	GAMEPLAY_SYSTEMS.md
+	TESTING.md
+
+tests/
+	unit/
+	integration/
+
+You may adjust this structure when technically justified, but maintain clear separation between systems.
+
+Create missing directories as needed.
+
+5. GAME ARCHITECTURE
+
+Implement the game using modular scenes and reusable systems.
+
+Recommended core scenes:
+
+Main scenes:
+- Main.tscn
+- MainMenu.tscn
+- GameOver.tscn
+- Victory.tscn
+- UpgradeScreen.tscn
+Player scenes:
+- Player.tscn
+- Player visual and animation components.
+- Player melee hitbox.
+- Player ranged weapon.
+- Player projectile.
+Enemy scenes:
+- SkeletonWarrior.tscn
+- DungeonCreature.tscn
+- DungeonArcher.tscn
+- PreviousSelf.tscn
+These ordinary enemy archetypes are proposed starting implementations. Their final inclusion and characteristics must remain consistent with the GDD.
+
+Boss scenes:
+- Floor5Boss.tscn
+- Floor10Boss.tscn
+Dungeon scenes:
+- Room.tscn
+- CombatRoom.tscn
+- Floor.tscn
+- DungeonDoor.tscn
+- DungeonEntrance.tscn
+- DungeonExit.tscn
+Pickup scenes:
+
+- HealingPickup.tscn
+
+UI scenes:
+- HUD.tscn
+- MobileControls.tscn
+- HealthBar.tscn
+- BossHealthBar.tscn
+- WeaponIndicator.tscn
+- CurrencyDisplay.tscn
+- PauseMenu.tscn
+Use a clear scene hierarchy and reusable components.
+
+6. AUTOLOADS AND GLOBAL SYSTEMS
+
+Create appropriate autoload scripts.
+
+GameManager.gd
+
+Responsible for:
+- Current game state.
+- Starting a new run.
+- Tracking current floor.
+- Tracking current room.
+- Managing transitions.
+- Handling game over.
+- Handling victory.
+- Coordinating major game systems.
+ProgressionManager.gd
+
+Responsible for:
+- Permanent character upgrades.
+- Permanent weapon upgrades.
+- Currency management.
+- Persistent progression data.
+- Applying purchased upgrades.
+PreviousSelfManager.gd
+
+Responsible for:
+- Capturing defeated character stat snapshots.
+- Storing previous-self data.
+- Creating previous-self enemy configurations.
+- Providing the appropriate previous-self configuration for encounters.
+AudioManager.gd
+
+Responsible for:
+- Background music.
+- Sound effects.
+- Audio transitions.
+- Volume management.
+SaveManager.gd
+
+Responsible for:
+- Saving permanent progression.
+- Loading permanent progression.
+- Saving currency and purchased upgrades.
+- Handling missing or corrupted save data safely.
+Avoid putting every system inside one autoload.
+
+Use signals and clear interfaces between managers.
+
+7. PLAYER SYSTEM
+
+Implement the player as a CharacterBody2D.
+
+The player must support:
+- Movement.
+- Health.
+- Taking damage.
+- Death.
+- Melee attacks.
+- Ranged attacks.
+- Weapon switching.
+- Optional dodge mechanic only if confirmed by the GDD.
+- Animation handling.
+- Collision detection.
+- Damage and invulnerability handling only as defined by the GDD.
+Player statistics:
+
+Create a configurable player data resource.
+
+It should support:
+- Maximum health.
+- Current health.
+- Attack damage.
+- Movement speed.
+- Weapon-related statistics.
+The numerical values found in design drafts should be treated as provisional until confirmed by the consolidated GDD.
+
+Do not hardcode upgrade values throughout multiple scripts.
+
+Use centralized data resources or configuration.
+
+Movement:
+
+Implement responsive 2D top-down movement.
+
+Requirements:
+- Movement in supported directions.
+- Diagonal movement normalization.
+- Collision with walls and obstacles.
+- Consistent movement speed.
+- Animation based on movement direction and state.
+Mobile controls:
+
+Implement mobile-friendly controls.
+
+Required controls:
+- Lower-left virtual joystick for movement.
+- Lower-right attack control.
+- Weapon-switch control.
+- Contextual interaction or exit control when appropriate.
+If dodge is included in the approved design, provide an appropriate control for it.
+
+Use Godot's input system and touch-compatible controls.
+
+Also provide keyboard and mouse controls for desktop testing.
+
+Keep the control mapping configurable.
+
+8. WEAPON SYSTEM
+
+Implement two distinct weapons.
+
+Weapon 1 — Dungeon Edge
+
+Melee weapon.
+
+Required behavior:
+- Attack input.
+- Melee attack animation.
+- Hitbox activation during the attack window.
+- Damage application.
+- Hit detection.
+- Attack cooldown.
+- Weapon upgrade support.
+The hitbox must only deal damage during valid attack frames.
+
+Avoid applying damage every frame while the hitbox overlaps an enemy.
+
+Weapon 2 — Warden Crossbow
+
+Ranged weapon.
+
+Required behavior:
+- Attack input.
+- Ranged attack animation.
+- Projectile creation.
+- Projectile movement.
+- Collision detection.
+- Damage application.
+- Projectile cleanup.
+- Weapon upgrade support.
+Projectiles must be independent scenes.
+
+Weapon switching:
+
+The player can switch between Dungeon Edge and Warden Crossbow.
+
+Requirements:
+- Switching must be responsive.
+- Current weapon must be visually identifiable.
+- Weapon state must be reflected in the HUD.
+- Switching must not create duplicate weapon instances.
+- Each weapon must retain its own configurable properties.
+Use a reusable weapon architecture so additional weapons can be added later if required.
+
+9. ENEMY SYSTEM
+
+Implement a reusable enemy base architecture.
+
+Enemy behavior should support:
+- Idle.
+- Detection.
+- Chasing.
+- Attacking.
+- Taking damage.
+- Death.
+- Collision.
+- Health management.
+Use finite state machines or another clean state-based architecture.
+
+Do not put every enemy behavior in one script.
+
+Ordinary enemies:
+
+Create configurable enemy types based on the approved enemy roster.
+
+Potential starting archetypes:
+1. Skeleton Warrior — melee enemy.
+2. Dungeon Creature — aggressive close-range enemy.
+3. Dungeon Archer — ranged enemy.
+Each enemy should have its own:
+- Health.
+- Damage.
+- Movement speed.
+- Attack range.
+- Attack cooldown.
+- Detection range.
+- Animation set.
+Use Resource-based configuration.
+
+Previous-self enemy:
+
+This is a core gameplay mechanic.
+
+A previous-self enemy must use a snapshot of the player's defeated character.
+
+The snapshot should contain the relevant approved character statistics and weapon archetypes, such as:
+- Maximum health.
+- Attack power.
+- Movement speed.
+- Dungeon Edge configuration.
+- Warden Crossbow configuration.
+- Other explicitly supported character statistics.
+Do not record or replay the player's movement, input history, attack timing, routes, or playstyle.
+
+Ordinary previous-self enemies should be slightly weaker than the current player.
+
+Boss versions should have greater health and stronger combat capabilities.
+
+The enemy must have readable attack animations, telegraphs, and response windows.
+
+The previous-self enemy must be recognizable as a corrupted version of the player.
+
+10. COMBAT SYSTEM
+
+Implement a centralized and reusable damage system.
+
+Requirements:
+- Attack validation.
+- Damage calculation.
+- Hit detection.
+- Health reduction.
+- Death detection.
+- Damage feedback.
+- Enemy damage handling.
+- Player damage handling.
+- Boss damage handling.
+Use signals for important events.
+
+Examples:
+- health_changed
+- entity_damaged
+- entity_died
+- enemy_defeated
+- boss_defeated
+- room_cleared
+Avoid duplicate damage logic across weapons and enemies.
+
+Make the system easy to extend.
+
+11. DUNGEON AND ROOM SYSTEM
+
+The game contains 10 floors.
+
+Each floor consists of interconnected rooms.
+
+Rooms should be designed as modular scenes.
+
+Room requirements:
+
+Each combat room must:
+- Have a defined room layout.
+- Contain enemies.
+- Track active enemies.
+- Lock exits while enemies remain.
+- Detect when all enemies have been defeated.
+- Unlock exits after the room is cleared.
+- Allow the player to transition to connected rooms.
+When all enemies are defeated:
+1. Detect that the room is clear.
+2. Unlock the exits.
+3. Play the appropriate unlock effect.
+4. Allow the player to leave.
+Do not unlock the room simply because an enemy leaves the detection area or becomes temporarily inactive.
+
+Floor requirements:
+
+Implement 10 floors.
+
+Floor progression should become more challenging as the player descends.
+
+The floors should become larger and contain more rooms as described in the GDD.
+
+Use deterministic layouts and enemy placements for the initial implementation.
+
+Do not prioritize procedural generation.
+
+Each floor should have a configurable room layout and progression structure.
+
+Floor themes:
+- Floors 1–4: Upper dungeon.
+- Floors 5–10: Deep and corrupted dungeon.
+Reuse environment assets appropriately while varying room layouts and enemy configurations.
+
+Boss floors:
+- Floor 5: Boss encounter.
+- Floor 10: Final boss encounter.
+The boss room must have a dedicated encounter state.
+
+The player should not be able to bypass the boss encounter and proceed to the next floor.
+
+After the Floor 5 boss is defeated, continue progression according to the GDD.
+
+After the Floor 10 boss is defeated, trigger the victory sequence.
+
+12. FLOOR 5 REVEAL CUTSCENE
+
+The first arrival at Floor 5 must trigger a short reveal cutscene.
+
+Requirements:
+- Trigger only on the first arrival.
+- Use appropriate camera framing.
+- Introduce the previous-self boss.
+- Use a controlled entrance or reveal animation.
+- Prevent normal gameplay input while the cutscene is active.
+- Restore gameplay control after the cutscene.
+- Transition into the boss encounter.
+Use AnimationPlayer, signals, and camera controls where appropriate.
+
+Avoid implementing an unnecessarily complicated cinematic system.
+
+The cutscene must be skippable only if the GDD permits it.
+
+13. DEATH, CURRENCY, AND PERMANENT PROGRESSION
+
+Defeat is part of the core progression loop.
+
+When the player dies:
+1. Trigger the player death animation.
+2. Stop active combat.
+3. Capture the defeated player's relevant stat snapshot.
+4. Send the snapshot to the PreviousSelfManager.
+5. Award the appropriate currency.
+6. Open the upgrade screen.
+7. Allow the player to purchase permanent upgrades.
+8. Apply purchased upgrades to the next run.
+Permanent upgrade categories:
+
+Character upgrades:
+- Maximum health.
+- Attack power.
+- Movement speed.
+Weapon upgrades:
+- Dungeon Edge upgrades.
+- Warden Crossbow upgrades.
+Each upgrade should have:
+- Upgrade identifier.
+- Display name.
+- Description.
+- Cost.
+- Current level.
+- Maximum level, if defined.
+- Effect on the relevant statistic.
+The upgrade system must be data-driven.
+
+Currency and permanent upgrades must persist across sessions using the SaveManager.
+
+Do not introduce additional upgrade categories unless approved by the GDD.
+
+Healing pickups:
+- Are one-time-use.
+- Restore only a limited amount of health.
+- Must not fully heal the player automatically.
+- Must be collectible through an appropriate interaction or collision system.
+
+14. USER INTERFACE
+
+Create a functional dark fantasy UI.
+
+Main menu:
+
+Include:
+- Game title.
+- Start game.
+- Settings.
+- Exit game.
+In-game HUD:
+
+Display:
+- Player health.
+- Currency.
+- Current floor.
+- Current weapon.
+- Enemy health where appropriate.
+- Boss health during boss encounters.
+Upgrade screen:
+
+Display:
+- Available currency.
+- Character upgrades.
+- Weapon upgrades.
+- Upgrade descriptions.
+- Upgrade costs.
+- Current upgrade levels.
+- Purchase controls.
+The player must not be able to purchase an upgrade without enough currency.
+
+Pause menu:
+
+Include:
+- Resume.
+- Settings.
+- Return to main menu, with appropriate confirmation if progress would be lost.
+Game over:
+
+Display:
+- Defeat message.
+- Relevant progression information.
+- Available currency.
+- Upgrade screen or appropriate progression flow.
+- Restart or continue options consistent with the GDD.
+Victory:
+
+Display a clear completion state after defeating the Floor 10 boss.
+
+Mobile layout:
+
+All UI must be designed for mobile aspect ratios.
+
+Use anchors and containers rather than hardcoded screen coordinates wherever possible.
+
+The UI should scale appropriately across different resolutions.
+
+15. ART ASSET INTEGRATION
+
+The project will use AI-generated pixel-art assets.
+
+Inspect the existing assets directories before creating placeholder art.
+
+Use the actual imported artwork whenever available.
+
+Do not replace finished assets with generic placeholders.
+
+If an asset does not exist yet:
+- Create a simple temporary placeholder.
+- Make the placeholder visually distinguishable.
+- Keep the scene and code functional.
+- Document which final asset is missing.
+- Make replacing the placeholder straightforward.
+Asset coverage and source integrity:
+- Inventory supplied assets before adding placeholders or replacing art.
+- Match each runtime use to the appropriate source image; distinguish animation sheets, static alternatives, and design/reference sheets.
+- Preserve the source directory's exact capitalization and filenames in every `res://` reference.
+- Confirm each referenced path exists and each atlas region/frame lies within its source image.
+- For art intended for gameplay, add or extend a test that verifies the scene uses the expected supplied texture or animation sheet.
+- Document reference-only or alternate images so they are not mistaken for missing gameplay art.
+Sprite sheet requirements:
+
+When importing animation sprite sheets:
+- Confirm the correct frame dimensions.
+- Configure sprite sheet horizontal and vertical frame counts.
+- Create appropriate SpriteFrames.
+- Name animations consistently.
+- Ensure animation speed is configurable.
+- Ensure transparent backgrounds are preserved.
+Use these animation naming conventions where appropriate:
+- idle_down
+- idle_up
+- idle_left
+- idle_right
+- walk_down
+- walk_up
+- walk_left
+- walk_right
+- attack_down
+- attack_up
+- attack_left
+- attack_right
+- hurt
+- death
+Do not assume every generated sprite sheet has the same number of frames.
+
+Inspect each sheet before configuring it.
+
+16. AUDIO SYSTEM
+
+Create a centralized audio system.
+
+Support:
+- Main menu music.
+- Dungeon exploration music.
+- Combat music.
+- Boss music.
+- Death music.
+- Victory music.
+Support sound effects for:
+- Footsteps.
+- Sword attacks.
+- Sword impacts.
+- Crossbow firing.
+- Projectile impacts.
+- Player damage.
+- Enemy damage.
+- Enemy death.
+- Healing pickup.
+- Door locking.
+- Door unlocking.
+- Weapon switching.
+- Boss entrance.
+- Boss attacks.
+- Upgrade purchases.
+- UI interactions.
+If audio files are missing, the system must still function without producing errors.
+
+17. SAVE SYSTEM
+
+Implement persistent progression.
+
+Use Godot-compatible file saving.
+
+Save data should include the persistent information confirmed by the GDD, such as:
+- Currency.
+- Purchased permanent character upgrades.
+- Purchased permanent weapon upgrades.
+- Any required progression flags.
+Do not save temporary combat state as permanent progression unless the GDD requires it.
+
+Include:
+- Save data validation.
+- Default values.
+- Missing save file handling.
+- Corrupted save file handling.
+- Safe save operations.
+Avoid exposing save data to ordinary gameplay scripts unnecessarily.
+
+18. GAME FLOW
+
+Implement the overall gameplay flow.
+
+Expected high-level flow:
+
+MAIN MENU
+    |
+    v
+START GAME
+    |
+    v
+INITIALIZE PLAYER AND RUN
+    |
+    v
+FLOOR 1
+    |
+    v
+CLEAR COMBAT ROOMS
+    |
+    v
+PROGRESS THROUGH FLOORS
+    |
+    v
+FLOOR 5
+    |
+    v
+FIRST-ARRIVAL REVEAL
+    |
+    v
+FLOOR 5 BOSS
+    |
+    v
+CONTINUE DESCENT
+    |
+    v
+FLOOR 10
+    |
+    v
+FINAL BOSS
+    |
+    v
+VICTORY
+
+Death flow:
+
+PLAYER DEFEATED
+    |
+    v
+CAPTURE CHARACTER SNAPSHOT
+    |
+    v
+AWARD CURRENCY
+    |
+    v
+UPDATE PREVIOUS-SELF DATA
+    |
+    v
+UPGRADE SCREEN
+    |
+    v
+START NEXT RUN
+
+Keep the run lifecycle and permanent progression lifecycle separate.
+
+Ensure previous-self snapshots are handled consistently between runs.
+
+19. INPUT MAPPING
+
+Create a configurable Input Map.
+
+Suggested desktop mappings:
+- Movement: WASD / Arrow Keys.
+- Melee attack: Left Mouse Button / designated keyboard key.
+- Ranged attack: Right Mouse Button / designated keyboard key.
+- Weapon switch: Q / designated keyboard key.
+- Pause: Escape.
+Mobile:
+- Virtual joystick.
+- Attack button.
+- Weapon switch button.
+- Contextual interaction button.
+- Optional dodge button only if included in the final design.
+Desktop controls are primarily for development and testing.
+
+Mobile controls remain the primary target.
+
+20. PERFORMANCE AND MOBILE OPTIMIZATION
+
+Optimize for mobile hardware.
+
+Requirements:
+- Avoid unnecessary per-frame processing.
+- Avoid creating excessive temporary nodes.
+- Use object pooling where projectile or effect frequency justifies it.
+- Use efficient collision layers and masks.
+- Avoid unnecessarily complex shaders.
+- Avoid excessive particle counts.
+- Use texture atlases or sprite sheets appropriately.
+- Keep UI responsive.
+- Use appropriate viewport and stretch settings.
+Do not sacrifice gameplay readability for visual effects.
+
+21. TESTING AND VALIDATION
+
+Testing is mandatory.
+
+Use Godot's command-line tools when available.
+
+At minimum, verify:
+
+Project validation:
+- Project opens without parse errors.
+- Main scene exists.
+- All referenced resources exist.
+- All required scripts compile.
+- Autoloads are configured correctly.
+Player tests:
+- Player movement works.
+- Player collision works.
+- Health changes correctly.
+- Player can die.
+- Player can switch weapons.
+Weapon tests:
+- Melee attacks deal damage correctly.
+- Melee attacks do not repeatedly damage from one attack.
+- Crossbow projectiles spawn correctly.
+- Projectiles damage valid targets.
+- Cooldowns work.
+Enemy tests:
+- Enemies detect and pursue the player.
+- Enemies attack correctly.
+- Enemies take damage.
+- Enemies die correctly.
+Room tests:
+- Room exits lock while enemies remain.
+- Room exits unlock after all enemies are defeated.
+- Player can transition between rooms.
+Progression tests:
+- Currency is awarded correctly.
+- Upgrades require sufficient currency.
+- Purchased upgrades persist.
+- Previous-self snapshots are captured correctly.
+Boss tests:
+- Floor 5 encounter triggers correctly.
+- Floor 5 reveal occurs only on first arrival.
+- Boss attacks have readable telegraphs.
+- Floor 10 boss triggers correctly.
+- Defeating the final boss triggers victory.
+Mobile tests:
+- Touch controls register input.
+- Virtual joystick moves the player.
+- Attack controls work.
+- Weapon switching works.
+- HUD scales across supported aspect ratios.
+Create test scripts or automated tests for important systems wherever practical.
+
+Record known issues in:
+
+docs/TESTING.md
+
+22. DEVELOPMENT MILESTONES
+
+Do not attempt to build every system in one massive operation.
+
+Develop the game through the following milestones.
+
+MILESTONE 1 — PROJECT FOUNDATION
+- Inspect repository.
+- Inspect GDD.
+- Create project structure.
+- Configure Godot project settings.
+- Configure input actions.
+- Create autoloads.
+- Create the main scene.
+- Create a placeholder player.
+- Implement player movement.
+- Verify the project runs.
+Completion condition:
+
+The game launches and the player can move around a basic test room.
+
+MILESTONE 2 — COMBAT FOUNDATION
+- Implement player health.
+- Implement Dungeon Edge.
+- Implement Warden Crossbow.
+- Implement projectiles.
+- Implement enemy base architecture.
+- Implement enemy damage and death.
+- Add basic combat feedback.
+Completion condition:
+
+The player can defeat enemies using both weapons.
+
+MILESTONE 3 — DUNGEON FOUNDATION
+- Create modular rooms.
+- Create room transitions.
+- Implement enemy tracking.
+- Implement locked exits.
+- Implement room clearing.
+- Implement floor progression.
+- Create deterministic test layouts.
+Completion condition:
+
+The player can clear rooms and progress through a basic multi-room floor.
+
+MILESTONE 4 — PROGRESSION FOUNDATION
+- Implement currency.
+- Implement death flow.
+- Implement permanent upgrades.
+- Implement save/load.
+- Implement previous-self snapshots.
+- Implement previous-self enemies.
+Completion condition:
+
+The player can die, upgrade, restart, and encounter a previous-self enemy based on saved character statistics.
+
+MILESTONE 5 — BOSS ENCOUNTERS
+- Implement Floor 5 boss.
+- Implement first-arrival reveal cutscene.
+- Implement boss health and attack telegraphs.
+- Implement Floor 10 boss.
+- Implement final victory state.
+Completion condition:
+
+The player can complete the complete 10-floor gameplay loop.
+
+MILESTONE 6 — UI AND MOBILE SUPPORT
+- Main menu.
+- HUD.
+- Upgrade screen.
+- Pause menu.
+- Game over screen.
+- Victory screen.
+- Virtual joystick.
+- Mobile attack controls.
+- Weapon switching controls.
+- Responsive UI.
+Completion condition:
+
+The game can be played using touch controls and desktop controls.
+
+MILESTONE 7 — CONTENT AND POLISH
+- Replace placeholders with generated art.
+- Implement animation sets.
+- Add VFX.
+- Add music and sound effects.
+- Improve room layouts.
+- Balance combat.
+- Optimize mobile performance.
+- Complete final testing.
+Completion condition:
+
+A stable, playable build with the required assets and systems.
+
+23. IMPORTANT IMPLEMENTATION STRATEGY
+
+Follow this workflow strictly.
+1. Inspect the repository and GDD.
+2. Report the current project state and any missing requirements.
+3. Create docs/IMPLEMENTATION_PLAN.md.
+4. Begin Milestone 1.
+5. Implement actual files and scenes.
+6. Validate the project using Godot.
+7. Fix errors.
+8. Update documentation.
+9. Move to the next milestone only after the current milestone passes its completion conditions.
+Do not stop after generating a plan.
+
+Do not wait for me to manually create every directory or script.
+
+Make reasonable implementation decisions independently when they are consistent with the GDD.
+
+However, when a decision would fundamentally change gameplay, progression, combat, or the previous-self mechanic, do not invent an answer. Record it as an unresolved design decision.
+
+If you encounter a technical problem:
+- Identify the root cause.
+- Fix it.
+- Validate the fix.
+- Continue development.
+If a required art asset is missing, use a temporary placeholder and continue implementing the gameplay system.
+
+24. FIRST TASK — BEGIN DEVELOPMENT
+
+Start by inspecting the currently open repository.
+
+Determine:
+- Whether this is already a Godot project.
+- Whether project.godot exists.
+- Which assets are already available.
+- Whether the GDD documents are available.
+- Whether any existing scripts or scenes should be preserved.
+- Whether the project is already configured for Godot 4.7.2.
+Then:
+1. Create the project documentation.
+2. Establish the folder structure.
+3. Configure the project settings and input actions.
+4. Create the initial main scene.
+5. Implement the player scene and movement.
+6. Create a basic test dungeon room.
+7. Run the project and validate it.
+At the end of Milestone 1, provide a concise development report containing:
+- Files created.
+- Files modified.
+- Systems implemented.
+- Tests performed.
+- Whether the project launches successfully.
+- Any errors or unresolved issues.
+- The next milestone.
+BEGIN by inspecting the repository and implementing Milestone 1.
+
+Remember: You are building an actual Godot game, not writing a design proposal. All implementation must be functional, organized, testable, and compatible with Godot 4.7.2.
+
+RECOMMENDED FOLLOW-UP INSTRUCTIONS
+
+After Copilot completes Milestone 1, use these instructions individually:
+
+Milestone 1 validation:
+"Validate Milestone 1, fix all errors, and report completion."
+
+Milestone 2:
+"Proceed with Milestone 2. Implement and test the complete combat foundation."
+
+Milestone 3:
+"Proceed with Milestone 3. Implement the deterministic dungeon and room progression."
+
+Milestone 4:
+"Proceed with Milestone 4. Implement death, upgrades, saving, and previous-self mechanics."
+
+Milestone 5:
+"Proceed with Milestone 5. Implement both boss encounters and the complete 10-floor progression."
+
+Milestone 6:
+"Proceed with Milestone 6. Implement the complete UI and mobile touch controls."
+
+Milestone 7:
+"Proceed with Milestone 7. Audit the supplied assets, integrate the appropriate artwork, audio, and VFX, optimize, and perform full testing."
+
+FINAL DEVELOPMENT RECOMMENDATIONS
+
+1. Commit to Git after every successful milestone. This gives you a recovery point if Copilot breaks a working system.
+
+2. Generate the player and weapon assets first. These are foundational to the combat implementation. Give Copilot the actual sprite files once they are ready.
+
+3. Test on desktop first, then mobile. Get movement, combat, room transitions, and progression working before spending time adjusting touch controls and mobile layouts.
+
+4. Have Copilot finish a working combat prototype before generating all ten floors. Once movement, both weapons, enemy AI, damage, and room clearing work together, the remaining development becomes much easier to manage.
