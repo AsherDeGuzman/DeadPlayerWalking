@@ -1,0 +1,358 @@
+DEAD PLAYER WALKING - CONVERSATION LOG
+Last updated: 2026-11-21
+
+PROJECT
+- Project location: C:\Users\Mark\OneDrive\Documents\GAMEDES\DeadPlayerWalking
+- Main Godot scene: res://scenes/core/main.tscn
+- Project uses Godot 4.7.1.
+
+CONVERSATION SUMMARY
+
+[2026-11-21 - Scene Dock / Node Visibility]
+The user requested that every game object be represented as a scene tree node in the Godot Scene Dock.
+They specifically did not want objects to be spawned only through runtime GDScript. They wanted visible,
+transparent scene hierarchy entries for every object, matching the Scene Dock structure shown in their images.
+
+The user rejected the earlier solution of merely adding hidden/static placeholder nodes to scripts.
+They clarified that the Scene Dock must show the actual instances and nested node trees, not only the
+PreviousSelf node.
+
+CURRENT PROJECT STATE
+- Level01 currently exposes nested scene children with editable_children.
+- The DungeonRoom scene contains static scene entries for:
+  - Enemies container
+  - Six Enemy nodes
+  - PreviousSelf
+  - DungeonBoss
+  - HealingPickup
+  - WorldGeometry
+  - SuppliedWalls
+  - Obstacles and SuppliedDungeonProp nodes
+  - ExitDoor
+  - DoorStateEffect
+  - WallTorch1 and WallTorch2
+  - ExitTrigger
+- The Level01 scene contains its DungeonRoom, Player, and HUD as editable scene instances.
+
+FILE CHANGES
+- scenes/dungeon/room.tscn
+  - Added static enemy, echo, boss, healing pickup, geometry, wall, torch, obstacle, prop, door, and effect entries.
+  - Added position values for the six enemy placeholders and the PreviousSelf/DungeonBoss placeholders.
+  - Enabled editable children on its nested scene instances.
+- scenes/core/level01.tscn
+  - Enabled editable_children for DungeonRoom, Player, and HUD.
+- scripts/dungeon/room.gd
+  - Reworked ordinary enemy setup to reuse static Enemy01 through Enemy06 nodes.
+  - Reworked previous-self and boss setup to reuse static nodes.
+  - Reworked wall, torch, prop, entrance, exit-door, and door-effect setup to reuse static Scene Dock nodes.
+- scripts/player.gd
+  - Replaced runtime creation of DamageFlash with lookup of the static player scene node.
+- scenes/actors/player.tscn
+  - Added static DamageFlash node.
+
+VALIDATION
+- The Godot 4.7.1 headless editor validation was run.
+- The latest validation reported no script or scene parse errors.
+
+USER WORKING REQUEST / PREFERENCES
+- Be transparent about what was changed.
+- Always show the complete scene hierarchy in the Godot Scene Dock.
+- Do not hide objects simply to make a runtime implementation appear complete.
+- Do not spawn gameplay objects as a workaround when the user wants them added to the Scene Dock.
+- Keep every relevant node and nested child visible/exposed when requested.
+- Save and maintain this conversation.txt after future turns or progress.
+
+RECENT USER MESSAGE
+"I need you to always save our conversation, should you always generate our conversation and always update it everytime we progress, just make a txt file so that you will always know our previous conversation"
+
+RESULT
+- Created this conversation.txt as a persistent project-level conversation log.
+- Future turns and significant project changes should append or update this file.
+
+[2026-11-21 - Master Development Prompt Resumed]
+The user instructed the project to resume from the MASTER DEVELOPMENT PROMPT.
+
+CURRENT MASTER-PROMPT STATUS
+- Project foundation, combat, dungeon, progression, boss, UI, and content systems are already implemented.
+- The repository now includes the controlling GDD, implementation plan, testing plan, and smoke test.
+- Development continued with the Scene Dock requirement: every reusable gameplay placeholder is now represented
+  in the room/player scene hierarchy, and Level01 exposes nested editable children.
+- A static Scene Dock combat tree was added to DungeonRoom for:
+  - Enemy01 through Enemy06
+  - PreviousSelf
+  - DungeonBoss
+  - HealingPickup
+  - WorldGeometry walls, torches, door, boss entrance, effects, obstacles, and props
+- Runtime room logic activates static placeholders for the current encounter instead of instantiating ordinary
+  enemies or bosses at runtime.
+
+CHANGES MADE DURING RESUME
+- Re-added static enemy placeholders to dungeon room scenes.
+- Re-added static previous-self, boss, pickup, wall, obstacle, door, effect, and torch nodes.
+- Enabled editable children on Level01 and DungeonRoom nested scene instances.
+- Updated DungeonRoom runtime logic to hide inactive enemy/pickup/prop placeholders and activate only the required
+  current-room objects.
+- Updated smoke-test save setup to start from clean default progression.
+- Updated smoke-test combatant discovery to ignore static inactive placeholders.
+- Updated static wall and boss-door assertions for the exposed Scene Dock hierarchy.
+- Updated IMPLEMENTATION_PLAN.md and TESTING.md with the Scene Dock implementation state.
+
+VALIDATION STATUS
+- Godot 4.7.1 headless scene/script parsing is successful.
+- The latest full smoke run did not pass: it reached boss/full-traversal assertions and ended from the in-game run
+  outcome before final completion.
+- Godot 4.7.2 is not available at the configured executable path; current validation uses the installed 4.7.1 executable.
+- The remaining smoke-test work is focused on boss/static-placeholder activation and complete traversal stability.
+
+NEXT WORK
+- Verify and fix boss static node activation in Floor 5 and Floor 10 boss rooms.
+- Fix or isolate any traversal loss that causes the run to end before boss verification.
+- Rerun the full smoke test until it passes or identify a bounded remaining root-cause failure.
+- Continue with Milestone 7 polish and final documentation only after automated combat/traversal validation is green.
+
+[2026-11-21 - Boss Static Node Fix]
+ROOT CAUSE
+- The boss room activated the static DungeonBoss node but left ordinary Enemy01 through Enemy06 and PreviousSelf
+  placeholders active. Combatant discovery could then encounter an ordinary placeholder before the boss.
+- Boss setup now hides and disables every ordinary and echo placeholder before activating DungeonBoss.
+- Boss health and defeated signals now use duplicate connections guards.
+
+VALIDATION RESULT
+- Full Godot 4.7.1 headless smoke test passed:
+  "PASS: GDD gameplay, UI/mobile systems, all room layouts, and the complete ten-floor run."
+- Validation included static Scene Dock placeholders, combat, room layouts, progression, Floor 5/10 bosses, and victory.
+- The smoke run reports 13 ObjectDB instances leaked at exit. This is a harness/process cleanup warning; no script
+  or assertion failures were reported.
+- Target Godot 4.7.2 validation remains pending because 4.7.2 is not installed at the configured executable path.
+
+NEXT WORK
+- Continue Milestone 7 polish and release validation.
+- Add tighter smoke-harness cleanup to investigate ObjectDB leak warnings.
+- Perform a final asset/audio audit and physical touch-device validation.
+
+[2026-11-21 - Milestone 7 Audit]
+ASSET AND AUDIO AUDIT
+- Supplied visual asset folders remain under the capitalized ASSETS/ directory.
+- No source .wav, .ogg, or .mp3 audio files are present.
+- AudioManager continues to generate fallback music and SFX because source audio assets are unavailable.
+- Required gameplay systems, UI, and supplied artwork remain connected.
+
+VALIDATION
+- Final normal smoke run passed:
+  "PASS: GDD gameplay, UI/mobile systems, all room layouts, and the complete ten-floor run."
+- A verbose smoke run also passed and did not report ObjectDB leaks.
+- Normal runs have intermittently reported ObjectDB instances leaked at exit; smoke assertions remain green.
+- Smoke teardown now frees the instantiated Main scene and AudioManager autoload before process exit.
+- Godot 4.7.2 validation remains pending on this environment.
+
+CURRENT MILESTONE STATUS
+- Milestones 1 through 6 are complete.
+- Milestone 7 core integration is complete.
+- Remaining release work: 4.7.2 verification, physical touch-device testing, and low-end mobile performance profiling.
+
+[2026-11-21 - External Editor Conflict]
+The user reported: "Could not keep changes to room.gd: the changes to room.gd were updated after they were shown. Try again."
+ROOT CAUSE
+- The Godot script editor kept an older in-memory copy of scripts/dungeon/room.gd open while Copilot updated the
+  file externally.
+- The disk copy contains the static boss-room and scene-tree fixes.
+- The user confirmed there are no unsaved edits that need to be kept in the Godot room.gd tab.
+
+REQUESTED RESOLUTION
+- Reload scripts/dungeon/room.gd from disk in the Godot editor.
+- Close and reopen the script tab if Reload is not offered.
+- Do not save the stale tab over the newer disk version.
+
+RESOLUTION ATTEMPTED
+- Closed the stale Godot editor process (PID 7444).
+- Reopened the project in a new Godot editor process.
+- The new editor opened the project from disk, eliminating the old in-memory room.gd conflict.
+- Verified the boss placeholder fix is present in the saved scripts/dungeon/room.gd file.
+
+[2026-11-21 - Final Continuation Pass]
+- Reopened project remained clean and usable.
+- Ran the complete smoke suite again.
+- Result: PASS: GDD gameplay, UI/mobile systems, all room layouts, and the complete ten-floor run.
+- No `TODO` or `FIXME` implementation placeholders were found in project GDScript or scene/resources.
+- No source audio files were found; generated fallback audio remains intentional.
+- Project configuration uses the 1280x720 landscape viewport and GL Compatibility rendering.
+- Milestones 1 through 7 are implemented and documented.
+- Release-only remaining work:
+  - Validate with Godot 4.7.2; only 4.7.1 is installed at the known executable path.
+  - Perform physical phone/tablet touch and device profiling.
+  - Check Android export configuration, SDK/templates, and low-end mobile performance.
+
+[2026-11-21 - Title Menu Redesign]
+The user requested the attached menu reference be applied without changing the existing background asset.
+
+IMPLEMENTATION
+- Kept `res://Assets/UI ASSETS/Asset 47 — Main menu background.png` and its existing background shade unchanged.
+- Replaced the title screen layout with a full-width framed composition:
+  - Thin blue frame with red corner accents.
+  - Small top-right diamond emblem.
+  - Tracking-style red metadata header.
+  - Large two-line title with warm-white "DEAD PLAYER" and red "WALKING".
+  - Existing tagline with increased hierarchy.
+  - Three bordered RUNS / SCRAP / ECHOES cards backed by live progress values.
+  - Four horizontal numbered buttons with highlighted primary action.
+- Retained the original exact button labels, callbacks, title menu settings actions, and responsive design canvas.
+
+TEST COVERAGE AND VALIDATION
+- Added smoke assertions for exact preserved background path, frame/emblem, two-tone title, progress cards, and menu options.
+- Godot 4.7.1 editor parse validation passed without script or scene errors.
+- Full smoke suite passed, including: `PASS: GDD gameplay, UI/mobile systems, all room layouts, and the complete ten-floor run.`
+- Updated `docs/TESTING.md` and this conversation log.
+
+[2026-11-21 - Whole-UI Style and Text Containment]
+The user asked to extend the title-menu design throughout the game and ensure every label fits within its button or intended container.
+
+IMPLEMENTATION
+- Standardized panels and buttons around the title screen's dark background, muted red borders, brighter red hover/focus accents, and warm neutral text.
+- Put workshop and settings content, pause menus, route/previous-self choices, and abandon confirmation copy inside clipped panel content.
+- Reworked the abandon description to wrap across two lines inside its dialog; kept both confirmation buttons inside the same panel.
+- Moved title-card captions/values and the title emblem symbol into their respective panels.
+- Grouped gameplay HUD labels and pause action inside a dark top frame, and gave the boss bar a matching framed panel.
+- Framed the Floor 5 reveal copy and gave the mobile USE action a dark, red-outlined button; moved other touch captions inward so they stay inside their button artwork.
+- Kept the existing title background asset and gameplay behavior intact.
+
+TEST COVERAGE AND VALIDATION
+- Added smoke assertions for panel-contained title cards, the shared button treatment, the abandon copy's line wrapping and content bounds, the HUD frame hierarchy, and Floor 5 reveal text containment.
+- Godot 4.7.1 headless editor parse passed.
+- Full smoke suite passed in a disposable project copy: "PASS: GDD gameplay, UI/mobile systems, all room layouts, and the complete ten-floor run."
+- Existing case-mismatch asset warnings remain unrelated to this UI change.
+
+[2026-11-21 - Restore Missing Wall and Tune Melee Hitboxes]
+The user reported a missing wall and asked for attack hitboxes to be fixed and dynamically optimized.
+
+IMPLEMENTATION
+- Added the absent static `WallTop04` scene node at the gap in the top-wall row, preserving the visible Scene Dock hierarchy.
+- Added weapon-configured capsule radius and length for melee attacks.
+- The player duplicates the authored capsule once at ready and updates that same shape and the attack offset/orientation for each swing.
+- Replaced the one-target-per-swing flag with a reusable per-attack target-ID set, so a swing can hit each overlapping enemy once without repeatedly damaging the same target.
+- Preserved the crossbow projectile behavior and existing static room geometry.
+
+TEST COVERAGE AND VALIDATION
+- Added scene-tree and runtime assertions for the missing wall segment and its selected wall texture.
+- Added checks for dynamic sword hitbox dimensions/position and for one sword swing damaging two distinct enemies.
+- Godot 4.7.1 headless parse and the full ten-floor smoke suite passed:
+  "PASS: GDD gameplay, UI/mobile systems, all room layouts, and the complete ten-floor run."
+- Updated `docs/TESTING.md`; temporary test project and save were removed.
+
+[2026-11-21 - Mob Health Bar Asset Integration]
+The user asked to apply the newly supplied Mob Health Bar asset to the game.
+
+IMPLEMENTATION
+- Copied `Mob Health Bars@2x.png` into the project's `ASSETS/ORDINARY ENEMY ASSETS/` directory.
+- Added `scripts/ui/mob_health_bar.gd`, which uses the isolated 120x20 "actual size (1x)" frame from the sheet and draws a four-segment, health-driven fill in the supplied palette.
+- Added a pale damage chip and low-health pulse, while keeping the boss HUD bar and player health UI unchanged.
+- Added a visible `MobHealthBar` child to the authored ordinary-enemy and PreviousSelf scenes so each bar is present in the Scene Dock.
+- Updated `FacilityEnemy` to refresh the child bar whenever its health changes.
+
+TEST COVERAGE AND VALIDATION
+- Added smoke assertions for the supplied texture, both scene-tree nodes, and dynamic health/chip updates.
+- The full ten-floor Godot 4.7.1 smoke suite passed in a disposable project copy:
+  "PASS: GDD gameplay, UI/mobile systems, all room layouts, and the complete ten-floor run."
+- Updated `docs/TESTING.md`; removed the disposable test projects, isolated save, and diagnostic crop.
+
+[2026-11-21 - Player Combat Visuals and Auto-Aim]
+The user asked to continue improving the player and projectile visuals, move enemy health bars above heads, correct ranged auto-aim, and address editor changes that were difficult to keep.
+
+IMPLEMENTATION
+- Expanded the player's display size and added four-direction idle, walk, melee, and ranged animations using the supplied master sprite sheet. The `DirectionalSprite` remains an authored player-scene node and is now an `AnimatedSprite2D`.
+- Moved ordinary-enemy and PreviousSelf health bars above their heads and moved their name labels clear of the bars.
+- Auto-aim now filters hidden/dead/out-of-range targets and checks line of sight; a stale out-of-range lock is cleared before choosing a valid enemy.
+- Added the authored `ArrowGlow` child to the projectile scene, enlarged the arrow sprite and trail, applied a fading trail gradient, and pulsed the arrow/glow during flight.
+- Added smoke assertions for directional animations, player sizing, health-bar placement, hidden/out-of-range aim targets, and projectile visuals.
+
+VALIDATION
+- Fresh Godot 4.7.1 import and the complete isolated smoke suite passed:
+  "PASS: GDD gameplay, UI/mobile systems, all room layouts, and the complete ten-floor run."
+- Updated `docs/TESTING.md`.
+- The existing Godot editor currently appears to retain an older in-memory version of `player.tscn` (its Inspector still identifies `DirectionalSprite` as `Sprite2D`). The saved project file and isolated test copy use `AnimatedSprite2D`; reload the scene from disk before saving it in the editor to avoid replacing the newer saved version.
+
+[2026-11-21 - Animated Floors and Grave-Bound Previous Selves]
+The user asked for a cinematic transition on every floor change and for every death to leave a grave at its actual floor, room, and position. Previous selves should emerge from those graves on later runs, not appear as a fixed Floor 5 boss. Scene content should remain visible in the editor's Scene Dock rather than being created as hidden echo/grave nodes at runtime.
+
+IMPLEMENTATION
+- Added an authored `echo_grave.tscn` using the stone monument region from the supplied dungeon prop sheet.
+- Added three authored `PreviousSelf` slots and three matching grave instances under `DungeonRoom > Enemies`; room logic configures and activates the matching slots at each saved death location.
+- Death records now preserve floor number, room number, and room-local position. Record sanitation retains bounded coordinates.
+- Added the authored `FloorTransition` subtree to `hud.tscn`, with portal artwork, curtains, floor title, and subtitle. Room and floor changes now wait for their cover/reveal animations.
+- Removed the fixed Floor 5 PreviousSelf boss/reveal; Floor 5 is regular and the Floor 10 Hollow Warden remains the final boss.
+- Updated smoke coverage and the README/testing/scene-tree guides; updated this conversation log.
+
+VALIDATION
+- Fresh Godot 4.7.1 import and the complete isolated smoke suite passed:
+  "PASS: GDD gameplay, UI/mobile systems, all room layouts, and the complete ten-floor run."
+- Tests verified authored echo/grave slots, death-location persistence, grave placement/emergence and delayed collision activation, animated floor transitions, the regular Floor 5 flow, and the Floor 10 boss.
+
+[2026-11-24 - Dynamic Mob Scaling, Boss Skills, and Potion Inventory]
+The user asked for stronger snapshot-based Previous Selves, 0.3% mob stat scaling when the player gains upgrades, a WASD-responsive joystick, a boss with health/damage tied to player health and three telegraphed skills, and stackable potions on the USE action.
+
+IMPLEMENTATION
+- Previous Selves now use their saved death snapshot and have 1.5x its health and damage and 1.15x its movement speed.
+- Every permanent upgrade level applies a compounding 1.003 multiplier to ordinary mob and PreviousSelf health, damage, and speed.
+- Bosses now have five times the current player's maximum health and deal one-fifth of it as damage.
+- The Hollow Warden cycles through Rift Volley, Sigil Burst, and Sanguine Sweep. Beam, circular ground-target, and directional cone telegraphs use the supplied boss-skill artwork. Their indicator nodes are authored in `boss.tscn`.
+- Healing pickups now add stackable potions. USE consumes one for up to 25% maximum health; when standing at a cleared exit, USE prioritizes leaving. The stack count is shown on the touch button.
+- Authored healing-use and potion-collection effect nodes in the player and room scenes; the virtual joystick thumb now mirrors keyboard movement without changing movement input.
+
+TEST COVERAGE AND VALIDATION
+- Updated smoke checks cover source-based echo multipliers, mob upgrade scaling, dynamic boss formulas, the three authored telegraphs and AOE dodge/damage behavior, potion stacking/use, and WASD joystick feedback.
+- Fresh Godot 4.7.1 asset import and the complete isolated smoke suite passed:
+  "PASS: GDD gameplay, UI/mobile systems, all room layouts, and the complete ten-floor run."
+- Updated the README, gameplay/testing documentation, Scene Dock guide, and this conversation log. Existing case-mismatch asset and missing-audio fallback warnings remain.
+
+[2026-11-24 - Visible Boss Skills and Faster, Scaling Enemies]
+The user asked for clearly visible boss-skill indicators, a 1.5-second archer reload with an indicator beside the enemy, larger Previous Selves with left/right movement animation, 1% player-stat-based mob growth for each entered room, and more mobile melee enemies.
+
+IMPLEMENTATION
+- Raised all three authored boss telegraphs above the floor draw layer and increased their contrast/opacity, while preserving the existing attack windows and AOE behavior.
+- Added an authored `ReloadIndicator` ProgressBar to `basic_enemy.tscn`. Archers can fire immediately after their attack wind-up, then show a countdown for the full 1.5-second post-shot reload.
+- Added an authored `Animation` sprite to `previous_self.tscn` and reused the supplied corrupted-self idle/walk/attack frames. Previous Selves now render at 140 pixels tall, flip horizontally while moving, and have a wider collision shape and repositioned health bar.
+- Every room entry, including a floor transition once, scales non-boss enemies by adding `1% × rooms entered` of the player's current maximum health, attack damage, and movement speed. This composes with the existing permanent-upgrade multiplier; melee archetypes also receive 1.4× pursuit speed, while archers retain their configured speed.
+- Updated the smoke test, README, gameplay/testing/scene-tree/structure/implementation docs, and this conversation log.
+
+TEST COVERAGE AND VALIDATION
+- Added checks for all telegraph draw layers/visibility, archer reload timing and countdown, per-room player-stat scaling, melee mobility, archer speed remaining unboosted, and enlarged PreviousSelf animation/flip/collider.
+- Fresh Godot 4.7.1 asset import and the complete isolated smoke suite passed:
+  "PASS: GDD gameplay, UI/mobile systems, all room layouts, and the complete ten-floor run."
+- Existing case-mismatched asset-path and missing-audio fallback warnings remain; temporary test copies and their project-specific save data were removed.
+
+[2026-11-21 - Correction: PreviousSelf Art and Player Reload]
+The user clarified that PreviousSelf must not use a boss animation asset and that the 1.5-second reload mechanic and indicator belong to the player's character, not the mob archers.
+
+CORRECTION
+- Restored PreviousSelf to its own supplied `Asset 09 — Previous-self character.png`; removed its dependency on the boss animation sheet. The original art is enlarged, horizontally flipped while pursuing, and given a subtle scripted bob/lean for movement and attack motion.
+- Removed the reload progress bar and special reload behavior from ordinary enemies. The player Warden Crossbow now starts a 1.5-second cooldown after firing and shows an authored progress bar beside the player. The player can still switch to and use the melee weapon during that cooldown.
+- Corrected the README, gameplay/testing/scene-tree/structure/implementation docs, and smoke tests to match the intended owner and art.
+
+VALIDATION
+- Fresh Godot 4.7.1 import and the complete isolated smoke suite passed with exit code 0:
+  "PASS: GDD gameplay, UI/mobile systems, all room layouts, and the complete ten-floor run."
+
+[Player Dash Cooldown and Button Feedback]
+The user requested a 3-second dash cooldown and a visible cooldown indicator inside the DASH button.
+
+IMPLEMENTATION
+- Set the player dash cooldown to 3 seconds; the existing 0.18-second dash and 0.34-second invulnerability durations remain unchanged.
+- Synchronized the player's remaining cooldown to the touch-controls DASH button. During cooldown it displays a dimmed overlay, shrinking ring, and numeric seconds.
+- Added smoke coverage for cooldown start, countdown synchronization, and expiry; updated the README and gameplay/testing/implementation docs.
+
+VALIDATION
+- Fresh Godot 4.7.1 asset import and the complete isolated smoke suite passed with exit code 0:
+  "PASS: GDD gameplay, UI/mobile systems, all room layouts, and the complete ten-floor run."
+
+[2026-11-21 - Godot Startup and room.gd Save Conflict]
+The user reported that the game would not run and that VS Code would not keep the pending `room.gd` changes.
+
+IMPLEMENTATION AND FINDINGS
+- Confirmed the saved `hud.gd` and `room.gd` parse without Godot/VS Code diagnostics. The saved `room.gd` already contains authored PreviousSelf/grave-slot handling and other scene-backed room setup.
+- Replaced the room enemy row calculation's implicit integer division with explicit `floorf` division, preserving row placement and clearing the `room.gd` diagnostic.
+- VS Code's Keep error indicates its chat-edit preview was generated against an older `room.gd` revision. The source file on disk already contains the scene/grave changes; retrying the stale preview is not needed and may continue to conflict.
+
+VALIDATION
+- Fresh isolated Godot 4.7.1 editor import/parse and main-scene startup both passed with exit code 0.
+- The complete isolated smoke suite also passed:
+  "PASS: GDD gameplay, UI/mobile systems, all room layouts, and the complete ten-floor run."
+- VS Code reports no diagnostics in the saved `hud.gd` or `room.gd`.

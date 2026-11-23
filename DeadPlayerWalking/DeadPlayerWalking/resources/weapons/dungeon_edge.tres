@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="WeaponConfig" format=3 uid="uid://ccksna6qv1jsf"]
+
+[ext_resource type="Script" uid="uid://cdvyhveuerq6w" path="res://scripts/weapons/weapon_config.gd" id="1_config"]
+
+[resource]
+script = ExtResource("1_config")
+weapon_id = &"dungeon_edge"
+display_name = "DUNGEON EDGE"
+attack_animation = &"melee_attack"
+cooldown = 0.38
+hitbox_offset = 34.0

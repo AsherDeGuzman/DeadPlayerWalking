@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="FloorDefinition" format=3 uid="uid://cpe656cg04jje"]
+
+[ext_resource type="Script" uid="uid://1g0wwqgoxbd7" path="res://scripts/dungeon/floor_definition.gd" id="1_floor"]
+
+[resource]
+script = ExtResource("1_floor")
+floor_number = 4
+room_count = 3
+base_enemy_count = 2
+healing_room_index = 1
+theme_color = Color(0.215686, 0.188235, 0.184314, 1)

@@ -1,0 +1,41 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/dungeon/dungeon_boss.gd" id="1_boss"]
+
+[sub_resource type="CircleShape2D" id="CircleShape_boss"]
+radius = 32.0
+
+[node name="DungeonBoss" type="CharacterBody2D"]
+collision_layer = 2
+collision_mask = 4
+script = ExtResource("1_boss")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape_boss")
+
+[node name="Aura" type="Sprite2D" parent="."]
+z_index = -2
+texture_filter = 1
+
+[node name="Art" type="Sprite2D" parent="."]
+texture_filter = 1
+z_index = -1
+
+[node name="Telegraph" type="Sprite2D" parent="."]
+visible = false
+z_index = 0
+texture_filter = 1
+
+[node name="TargetTelegraph" type="Sprite2D" parent="."]
+visible = false
+z_index = 0
+texture_filter = 1
+
+[node name="SweepTelegraph" type="Sprite2D" parent="."]
+visible = false
+z_index = 0
+texture_filter = 1
+
+[node name="Animation" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+z_index = 1

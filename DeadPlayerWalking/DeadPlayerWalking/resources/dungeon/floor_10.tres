@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="FloorDefinition" format=3 uid="uid://c1emqan8awnyg"]
+
+[ext_resource type="Script" uid="uid://1g0wwqgoxbd7" path="res://scripts/dungeon/floor_definition.gd" id="1_floor"]
+
+[resource]
+script = ExtResource("1_floor")
+floor_number = 10
+floor_name = "The Final Descent"
+room_count = 6
+base_enemy_count = 3
+healing_room_index = 2
+boss_id = &"hollow_warden"
+theme_color = Color(0.219608, 0.141176, 0.180392, 1)

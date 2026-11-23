@@ -1,0 +1,398 @@
+[gd_scene load_steps=16 format=3]
+
+[ext_resource type="Script" path="res://scripts/dungeon/room.gd" id="1_room"]
+[ext_resource type="PackedScene" path="res://scenes/dungeon/healing_pickup.tscn" id="2_healing"]
+[ext_resource type="PackedScene" path="res://scenes/actors/basic_enemy.tscn" id="3_enemy"]
+[ext_resource type="PackedScene" path="res://scenes/actors/previous_self.tscn" id="4_echo"]
+[ext_resource type="PackedScene" path="res://scenes/dungeon/boss.tscn" id="5_boss"]
+[ext_resource type="PackedScene" path="res://scenes/dungeon/echo_grave.tscn" id="6_echo_grave"]
+[ext_resource type="Texture2D" path="res://ASSETS/PICKUPS AND GAMEPLAY ASSETS/Asset 36 — Healing effect.png" id="7_healing_effect"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape_room_side"]
+size = Vector2(36, 720)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape_room_bottom"]
+size = Vector2(1280, 36)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape_room_top"]
+size = Vector2(542, 36)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape_exit_gate"]
+size = Vector2(148, 24)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape_exit_trigger"]
+size = Vector2(220, 58)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape_obstacle_01"]
+size = Vector2(112, 38)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape_obstacle_02"]
+size = Vector2(112, 38)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape_obstacle_03"]
+size = Vector2(124, 38)
+
+[node name="DungeonRoom" type="Node2D"]
+script = ExtResource("1_room")
+
+[node name="FloorLayer" type="TileMapLayer" parent="."]
+z_index = 0
+
+[node name="WorldGeometry" type="Node2D" parent="."]
+
+[node name="BoundaryLeft" type="StaticBody2D" parent="WorldGeometry"]
+position = Vector2(0, 360)
+collision_layer = 4
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WorldGeometry/BoundaryLeft"]
+shape = SubResource("RectangleShape_room_side")
+
+[node name="BoundaryRight" type="StaticBody2D" parent="WorldGeometry"]
+position = Vector2(1280, 360)
+collision_layer = 4
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WorldGeometry/BoundaryRight"]
+shape = SubResource("RectangleShape_room_side")
+
+[node name="BoundaryBottom" type="StaticBody2D" parent="WorldGeometry"]
+position = Vector2(640, 732)
+collision_layer = 4
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WorldGeometry/BoundaryBottom"]
+shape = SubResource("RectangleShape_room_bottom")
+
+[node name="BoundaryTopLeft" type="StaticBody2D" parent="WorldGeometry"]
+position = Vector2(271, 12)
+collision_layer = 4
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WorldGeometry/BoundaryTopLeft"]
+shape = SubResource("RectangleShape_room_top")
+
+[node name="BoundaryTopRight" type="StaticBody2D" parent="WorldGeometry"]
+position = Vector2(1009, 12)
+collision_layer = 4
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WorldGeometry/BoundaryTopRight"]
+shape = SubResource("RectangleShape_room_top")
+
+[node name="LockedExit" type="StaticBody2D" parent="WorldGeometry"]
+position = Vector2(640, 34)
+collision_layer = 4
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WorldGeometry/LockedExit"]
+shape = SubResource("RectangleShape_exit_gate")
+
+[node name="ExitDoor" type="Sprite2D" parent="WorldGeometry"]
+position = Vector2(640, 110)
+z_index = 1
+
+[node name="DoorStateEffect" type="Sprite2D" parent="WorldGeometry"]
+position = Vector2(640, 110)
+z_index = 2
+visible = false
+
+[node name="HealingCollectionEffect" type="Sprite2D" parent="."]
+visible = false
+z_index = 2
+texture_filter = 1
+texture = ExtResource("7_healing_effect")
+
+[node name="WallTorch1" type="Sprite2D" parent="WorldGeometry"]
+position = Vector2(96, 210)
+z_index = 1
+
+[node name="WallTorch2" type="Sprite2D" parent="WorldGeometry"]
+position = Vector2(1184, 210)
+z_index = 1
+flip_h = true
+
+[node name="BossRoomEntrance" type="Sprite2D" parent="WorldGeometry"]
+position = Vector2(640, 116)
+z_index = 0
+
+[node name="SuppliedWalls" type="Node2D" parent="WorldGeometry"]
+
+[node name="WallTop01" type="Sprite2D" parent="WorldGeometry/SuppliedWalls"]
+position = Vector2(71, 45)
+scale = Vector2(0.95, 0.95)
+
+[node name="WallTop02" type="Sprite2D" parent="WorldGeometry/SuppliedWalls"]
+position = Vector2(213, 45)
+scale = Vector2(0.95, 0.95)
+
+[node name="WallTop03" type="Sprite2D" parent="WorldGeometry/SuppliedWalls"]
+position = Vector2(355, 45)
+scale = Vector2(0.95, 0.95)
+
+[node name="WallTop04" type="Sprite2D" parent="WorldGeometry/SuppliedWalls"]
+position = Vector2(497, 45)
+scale = Vector2(0.95, 0.95)
+
+[node name="WallTop05" type="Sprite2D" parent="WorldGeometry/SuppliedWalls"]
+position = Vector2(639, 45)
+scale = Vector2(0.95, 0.95)
+
+[node name="WallTop06" type="Sprite2D" parent="WorldGeometry/SuppliedWalls"]
+position = Vector2(781, 45)
+scale = Vector2(0.95, 0.95)
+
+[node name="WallTop07" type="Sprite2D" parent="WorldGeometry/SuppliedWalls"]
+position = Vector2(923, 45)
+scale = Vector2(0.95, 0.95)
+
+[node name="WallTop08" type="Sprite2D" parent="WorldGeometry/SuppliedWalls"]
+position = Vector2(1065, 45)
+scale = Vector2(0.95, 0.95)
+
+[node name="WallTop09" type="Sprite2D" parent="WorldGeometry/SuppliedWalls"]
+position = Vector2(1207, 45)
+scale = Vector2(0.95, 0.95)
+
+[node name="WallBottom01" type="Sprite2D" parent="WorldGeometry/SuppliedWalls"]
+position = Vector2(71, 675)
+scale = Vector2(0.95, 0.95)
+
+[node name="WallBottom02" type="Sprite2D" parent="WorldGeometry/SuppliedWalls"]
+position = Vector2(213, 675)
+scale = Vector2(0.95, 0.95)
+
+[node name="WallBottom03" type="Sprite2D" parent="WorldGeometry/SuppliedWalls"]
+position = Vector2(355, 675)
+scale = Vector2(0.95, 0.95)
+
+[node name="WallBottom04" type="Sprite2D" parent="WorldGeometry/SuppliedWalls"]
+position = Vector2(497, 675)
+scale = Vector2(0.95, 0.95)
+
+[node name="WallBottom05" type="Sprite2D" parent="WorldGeometry/SuppliedWalls"]
+position = Vector2(639, 675)
+scale = Vector2(0.95, 0.95)
+
+[node name="WallBottom06" type="Sprite2D" parent="WorldGeometry/SuppliedWalls"]
+position = Vector2(781, 675)
+scale = Vector2(0.95, 0.95)
+
+[node name="WallBottom07" type="Sprite2D" parent="WorldGeometry/SuppliedWalls"]
+position = Vector2(923, 675)
+scale = Vector2(0.95, 0.95)
+
+[node name="WallBottom08" type="Sprite2D" parent="WorldGeometry/SuppliedWalls"]
+position = Vector2(1065, 675)
+scale = Vector2(0.95, 0.95)
+
+[node name="WallBottom09" type="Sprite2D" parent="WorldGeometry/SuppliedWalls"]
+position = Vector2(1207, 675)
+scale = Vector2(0.95, 0.95)
+
+[node name="WallLeft01" type="Sprite2D" parent="WorldGeometry/SuppliedWalls"]
+position = Vector2(45, 72)
+rotation = 1.5707964
+scale = Vector2(0.95, 0.95)
+
+[node name="WallLeft02" type="Sprite2D" parent="WorldGeometry/SuppliedWalls"]
+position = Vector2(45, 216)
+rotation = 1.5707964
+scale = Vector2(0.95, 0.95)
+
+[node name="WallLeft03" type="Sprite2D" parent="WorldGeometry/SuppliedWalls"]
+position = Vector2(45, 360)
+rotation = 1.5707964
+scale = Vector2(0.95, 0.95)
+
+[node name="WallLeft04" type="Sprite2D" parent="WorldGeometry/SuppliedWalls"]
+position = Vector2(45, 504)
+rotation = 1.5707964
+scale = Vector2(0.95, 0.95)
+
+[node name="WallLeft05" type="Sprite2D" parent="WorldGeometry/SuppliedWalls"]
+position = Vector2(45, 648)
+rotation = 1.5707964
+scale = Vector2(0.95, 0.95)
+
+[node name="WallRight01" type="Sprite2D" parent="WorldGeometry/SuppliedWalls"]
+position = Vector2(1235, 72)
+rotation = 1.5707964
+scale = Vector2(0.95, 0.95)
+
+[node name="WallRight02" type="Sprite2D" parent="WorldGeometry/SuppliedWalls"]
+position = Vector2(1235, 216)
+rotation = 1.5707964
+scale = Vector2(0.95, 0.95)
+
+[node name="WallRight03" type="Sprite2D" parent="WorldGeometry/SuppliedWalls"]
+position = Vector2(1235, 360)
+rotation = 1.5707964
+scale = Vector2(0.95, 0.95)
+
+[node name="WallRight04" type="Sprite2D" parent="WorldGeometry/SuppliedWalls"]
+position = Vector2(1235, 504)
+rotation = 1.5707964
+scale = Vector2(0.95, 0.95)
+
+[node name="WallRight05" type="Sprite2D" parent="WorldGeometry/SuppliedWalls"]
+position = Vector2(1235, 648)
+rotation = 1.5707964
+scale = Vector2(0.95, 0.95)
+
+[node name="Obstacles" type="Node2D" parent="WorldGeometry"]
+
+[node name="Obstacle01" type="StaticBody2D" parent="WorldGeometry/Obstacles"]
+collision_layer = 4
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WorldGeometry/Obstacles/Obstacle01"]
+disabled = true
+shape = SubResource("RectangleShape_obstacle_01")
+
+[node name="SuppliedDungeonProp" type="Sprite2D" parent="WorldGeometry/Obstacles/Obstacle01"]
+position = Vector2(0, -30)
+z_index = 2
+
+[node name="Obstacle02" type="StaticBody2D" parent="WorldGeometry/Obstacles"]
+collision_layer = 4
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WorldGeometry/Obstacles/Obstacle02"]
+disabled = true
+shape = SubResource("RectangleShape_obstacle_01")
+
+[node name="SuppliedDungeonProp" type="Sprite2D" parent="WorldGeometry/Obstacles/Obstacle02"]
+position = Vector2(0, -30)
+z_index = 2
+
+[node name="Obstacle03" type="StaticBody2D" parent="WorldGeometry/Obstacles"]
+collision_layer = 4
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WorldGeometry/Obstacles/Obstacle03"]
+disabled = true
+shape = SubResource("RectangleShape_obstacle_02")
+
+[node name="SuppliedDungeonProp" type="Sprite2D" parent="WorldGeometry/Obstacles/Obstacle03"]
+position = Vector2(0, -30)
+z_index = 2
+
+[node name="Obstacle04" type="StaticBody2D" parent="WorldGeometry/Obstacles"]
+collision_layer = 4
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WorldGeometry/Obstacles/Obstacle04"]
+disabled = true
+shape = SubResource("RectangleShape_obstacle_02")
+
+[node name="SuppliedDungeonProp" type="Sprite2D" parent="WorldGeometry/Obstacles/Obstacle04"]
+position = Vector2(0, -30)
+z_index = 2
+
+[node name="Obstacle05" type="StaticBody2D" parent="WorldGeometry/Obstacles"]
+collision_layer = 4
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WorldGeometry/Obstacles/Obstacle05"]
+disabled = true
+shape = SubResource("RectangleShape_obstacle_03")
+
+[node name="SuppliedDungeonProp" type="Sprite2D" parent="WorldGeometry/Obstacles/Obstacle05"]
+position = Vector2(0, -30)
+z_index = 2
+
+[node name="Obstacle06" type="StaticBody2D" parent="WorldGeometry/Obstacles"]
+collision_layer = 4
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WorldGeometry/Obstacles/Obstacle06"]
+disabled = true
+shape = SubResource("RectangleShape_obstacle_03")
+
+[node name="SuppliedDungeonProp" type="Sprite2D" parent="WorldGeometry/Obstacles/Obstacle06"]
+position = Vector2(0, -30)
+z_index = 2
+
+[node name="Enemies" type="Node2D" parent="."]
+
+[node name="Enemy01" parent="Enemies" instance=ExtResource("3_enemy")]
+position = Vector2(320, 248)
+editable_children = true
+
+[node name="Enemy02" parent="Enemies" instance=ExtResource("3_enemy")]
+position = Vector2(640, 248)
+editable_children = true
+
+[node name="Enemy03" parent="Enemies" instance=ExtResource("3_enemy")]
+position = Vector2(960, 248)
+editable_children = true
+visible = false
+
+[node name="Enemy04" parent="Enemies" instance=ExtResource("3_enemy")]
+position = Vector2(320, 360)
+editable_children = true
+visible = false
+
+[node name="Enemy05" parent="Enemies" instance=ExtResource("3_enemy")]
+position = Vector2(640, 360)
+editable_children = true
+visible = false
+
+[node name="Enemy06" parent="Enemies" instance=ExtResource("3_enemy")]
+position = Vector2(960, 360)
+editable_children = true
+visible = false
+
+[node name="PreviousSelf" parent="Enemies" instance=ExtResource("4_echo")]
+position = Vector2(640, 240)
+editable_children = true
+visible = false
+
+[node name="CollisionShape2D" parent="Enemies/PreviousSelf" index="0"]
+disabled = true
+
+[node name="EchoGrave01" parent="Enemies" instance=ExtResource("6_echo_grave")]
+position = Vector2(640, 240)
+editable_children = true
+
+[node name="PreviousSelf02" parent="Enemies" instance=ExtResource("4_echo")]
+position = Vector2(640, 240)
+editable_children = true
+visible = false
+
+[node name="CollisionShape2D" parent="Enemies/PreviousSelf02" index="0"]
+disabled = true
+
+[node name="EchoGrave02" parent="Enemies" instance=ExtResource("6_echo_grave")]
+position = Vector2(640, 240)
+editable_children = true
+
+[node name="PreviousSelf03" parent="Enemies" instance=ExtResource("4_echo")]
+position = Vector2(640, 240)
+editable_children = true
+visible = false
+
+[node name="CollisionShape2D" parent="Enemies/PreviousSelf03" index="0"]
+disabled = true
+
+[node name="EchoGrave03" parent="Enemies" instance=ExtResource("6_echo_grave")]
+position = Vector2(640, 240)
+editable_children = true
+
+[node name="DungeonBoss" parent="Enemies" instance=ExtResource("5_boss")]
+position = Vector2(640, 250)
+editable_children = true
+visible = false
+
+[node name="HealingPickup" parent="." instance=ExtResource("2_healing")]
+editable_children = true
+visible = false
+
+[node name="ExitTrigger" type="Area2D" parent="."]
+position = Vector2(640, 76)
+collision_layer = 0
+collision_mask = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ExitTrigger"]
+shape = SubResource("RectangleShape_exit_trigger")

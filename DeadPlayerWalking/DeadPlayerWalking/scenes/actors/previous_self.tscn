@@ -1,0 +1,29 @@
+[gd_scene format=3 uid="uid://ci7c1bxcl1bn2"]
+
+[ext_resource type="Script" uid="uid://bcjymnpq67xrr" path="res://scripts/enemy.gd" id="1_enemy"]
+[ext_resource type="Texture2D" uid="uid://bvho3cayf17ym" path="res://ASSETS/PLAYER ASSETS/Asset 09 — Previous-self character.png" id="2_art"]
+[ext_resource type="Script" uid="uid://ds4wdcadhixvt" path="res://scripts/ui/mob_health_bar.gd" id="3_health_bar"]
+
+[sub_resource type="CircleShape2D" id="CircleShape_echo"]
+radius = 22.0
+
+[node name="PreviousSelf" type="CharacterBody2D" unique_id=95065801]
+position = Vector2(649, 342)
+collision_layer = 2
+collision_mask = 4
+script = ExtResource("1_enemy")
+is_previous_self = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1515061247]
+shape = SubResource("CircleShape_echo")
+
+[node name="Art" type="Sprite2D" parent="." unique_id=2060428574]
+modulate = Color(0.72, 0.62, 0.92, 1)
+z_index = -1
+texture_filter = 1
+scale = Vector2(0.045, 0.045)
+texture = ExtResource("2_art")
+
+[node name="MobHealthBar" type="Node2D" parent="." unique_id=338408609]
+position = Vector2(0, -92)
+script = ExtResource("3_health_bar")
